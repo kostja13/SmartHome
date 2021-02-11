@@ -1,2 +1,4 @@
 # SmartHome
-# SmartHome
+
+Smart Home Simulation
+
