@@ -1,0 +1,1 @@
+docker-compose up --build --scale pytest=0 --scale thriftclienttest=0 --remove-orphans

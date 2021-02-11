@@ -1,0 +1,1 @@
+docker-compose up --build --scale thriftclienttest=0 --scale pytest=10 --scale pysensor=0 --scale gosensor=0 --scale gosensor2=0 --scale zentrale=1 --scale webserver=0  --remove-orphans

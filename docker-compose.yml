@@ -1,0 +1,74 @@
+version: '3'
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    expose:
+      - 1883
+    ports:
+      - 1883:1883
+
+  webserver:
+    build: ./webserver
+    environment:
+     PYTHONUNBUFFERED: 1
+    expose:
+     - "80"
+    ports:
+     - "80:80"
+    volumes:
+     - ./sqlite:/srv/sqlite
+     
+  zentrale:
+   build: ./pyzentio
+   depends_on:
+    - thriftserver
+   environment:
+    PYTHONUNBUFFERED: 1
+   expose:
+    - "5005/udp"
+   ports:
+    - "5005:5005/udp"
+   volumes:
+    - ./sqlite:/srv/sqlite
+
+  pysensor:
+   build: ./pysensor
+   depends_on:
+    - zentrale
+   environment:
+    PYTHONUNBUFFERED: 1
+    
+  pytest:
+   build: ./test
+   depends_on:
+    - zentrale   
+   environment:
+    PYTHONUNBUFFERED: 1    
+
+  thriftclienttest:
+   build: ./rpcTestClient
+   depends_on:
+    - thriftserver
+   environment:
+    PYTHONUNBUFFERED: 1    
+    
+  thriftserver:
+   build: ./rpcServer
+   environment:
+    PYTHONUNBUFFERED: 1
+   expose:
+    - "9090"
+   ports:
+    - "9090:9090"
+    
+  gosensor:
+   build: ./gosensor
+   depends_on:
+    - zentrale
+
+  gosensor2:
+   build: ./gosensor2
+   depends_on:
+    - zentrale
